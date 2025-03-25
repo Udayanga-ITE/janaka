@@ -25,5 +25,5 @@ jobs:
           rsync -avz --delete --exclude=".well-known" --exclude=".user.ini" -e "ssh -o StrictHostKeyChecking=no -i private_key.pem" ./ $USER@$HOST:$DEPLOY_DIR
           ssh -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST << 'EOF'
             cd $DEPLOY_DIR
+            rm private_key.pem
           EOF
-          rm private_key.pem
