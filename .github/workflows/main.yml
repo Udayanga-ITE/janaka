@@ -24,9 +24,9 @@ jobs:
           chmod 600 private_key.pem
           rsync -avz --delete --exclude=".well-known" --exclude=".user.ini" -e "ssh -o StrictHostKeyChecking=no -i private_key.pem" ./ $USER@$HOST:$DEPLOY_DIR
           ssh -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST << 'EOF'
-            rm -f $DEPLOY_DIR/private_key.pem
             sudo chown -R $USER:$USER $DEPLOY_DIR
             sudo chmod -R 755 $DEPLOY_DIR
+            rm -f $DEPLOY_DIR/private_key.pem
           EOF
 
           # Remove private key from GitHub Actions runner
