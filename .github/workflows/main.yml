@@ -22,7 +22,7 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
-          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no -i private_key.pem" ./ $USER@$HOST:$DEPLOY_DIR
+          rsync -avz --delete --exclude=".well-known" --exclude=".user.ini" -e "ssh -o StrictHostKeyChecking=no -i private_key.pem" ./ $USER@$HOST:$DEPLOY_DIR
           ssh -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST << 'EOF'
             cd $DEPLOY_DIR
             sudo systemctl restart janaka.linkpc.net
