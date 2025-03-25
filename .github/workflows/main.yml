@@ -1,0 +1,31 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches:
+      - main  # Change this to your deployment branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to AWS via SSH
+        env:
+          PRIVATE_KEY: ${{ secrets.JANAKA_AWS_SSH_KEY }}
+          HOST: ${{ secrets.JANAKA_AWS_HOST }}
+          USER: ${{ secrets.JANAKA_AWS_USER }}
+          DEPLOY_DIR: /www/wwwroot/janaka.linkpc.net  # Change this to your app directory
+        run: |
+          echo "$PRIVATE_KEY" > private_key.pem
+          chmod 600 private_key.pem
+          ssh -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST << 'EOF'
+            cd $DEPLOY_DIR
+            git pull origin main
+            docker-compose down
+            docker-compose up -d --build
+          EOF
+          rm private_key.pem
