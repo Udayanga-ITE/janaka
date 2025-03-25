@@ -3,7 +3,7 @@ name: Deploy to AWS
 on:
   push:
     branches:
-      - main  # Change this to your deployment branch
+      - main
 
 jobs:
   deploy:
@@ -18,14 +18,13 @@ jobs:
           PRIVATE_KEY: ${{ secrets.JANAKA_AWS_SSH_KEY }}
           HOST: ${{ secrets.JANAKA_AWS_HOST }}
           USER: ${{ secrets.JANAKA_AWS_USER }}
-          DEPLOY_DIR: /www/wwwroot/janaka.linkpc.net  # Change this to your app directory
+          DEPLOY_DIR: /www/wwwroot/janaka.linkpc.net
         run: |
           echo "$PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
+          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no -i private_key.pem" ./ $USER@$HOST:$DEPLOY_DIR
           ssh -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST << 'EOF'
             cd $DEPLOY_DIR
-            git pull origin main
-            docker-compose down
-            docker-compose up -d --build
+            sudo systemctl restart janaka.linkpc.net
           EOF
           rm private_key.pem
