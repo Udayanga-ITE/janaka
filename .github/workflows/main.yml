@@ -25,6 +25,7 @@ jobs:
           rsync -avz --delete --exclude=".well-known" --exclude=".user.ini" --exclude="private_key.pem" --exclude=".github" --exclude=".gitignore" -e "ssh -o StrictHostKeyChecking=no -i private_key.pem" ./ $USER@$HOST:$DEPLOY_DIR
           ssh -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST << 'EOF'
             rm -f $DEPLOY_DIR/private_key.pem
+            rm -f $DEPLOY_DIR/.git
           EOF
 
           # Remove private key from GitHub Actions runner
